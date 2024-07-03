@@ -1,5 +1,8 @@
 #!/bin/bash
 
+#Проверка обновления репозитория
+git pull
+
 # Проверка на наличие папки venv
 if [ ! -d "venv" ]; then
     echo "Creating virtual environment..."
