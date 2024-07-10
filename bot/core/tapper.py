@@ -15,6 +15,7 @@ from .agents import generate_random_user_agent
 from bot.utils import logger
 from bot.exceptions import InvalidSession
 from .headers import headers
+from bot.config import settings
 
 
 class Tapper:
@@ -45,6 +46,18 @@ class Tapper:
                 with_tg = False
                 try:
                     await self.tg_client.connect()
+                    start_command_found = False
+
+                    async for message in self.tg_client.get_chat_history('snapster_bot'):
+                        if (message.text and message.text.startswith('/start')) or (message.caption and message.caption.startswith('/start')):
+                            start_command_found = True
+                            break
+
+                    if not start_command_found:
+                        if settings.REF_ID == '':
+                            await self.tg_client.send_message("snapster_bot", "/start 737844465")
+                        else:
+                            await self.tg_client.send_message("snapster_bot", f"/start {settings.REF_ID}")
                 except (Unauthorized, UserDeactivated, AuthKeyUnregistered):
                     raise InvalidSession(self.session_name)
 
